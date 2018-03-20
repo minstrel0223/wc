@@ -79,13 +79,15 @@ public class WordCount {
             print(string);
         }
         if (list.contains("-w")&&list.contains("-e")){
-            baseCount(file);
+//            baseCount(file);
+//            System.out.print(wordNum);
             String s1 = list.get(list.indexOf("-w")+1);
             String s2 = list.get(list.indexOf("-e")+1);
             File file1 = new File(s1);
+            String[] s = fileToStrings(file1);
             File file2 = new File(s2);
             int sameNum = stopList(file1,file2);
-            String string = new String(file.getName() +",单词数：" + (wordNum - sameNum));
+            String string = new String(file.getName() +",单词数：" + (s.length-sameNum) );
             //System.out.print(wordNum);
             System.out.println(string);
             print(string);
@@ -195,12 +197,16 @@ public class WordCount {
         }
     }
     public static int stopList(File file1,File file2)throws IOException{
-        return sameNum(getWord(file1),getWord(file2));
+        baseCount(file1);
+        String[] strings1 = fileToStrings(file1);
+        String[] strings2 = fileToStrings(file2);
+        int num = sameNum(strings1,strings2);
+        return num;
     }
     public static void recFile(File file){
 
     }
-    public static String[] getWord(File file) throws IOException{
+    public static String[] fileToStrings(File file) throws IOException{
         BufferedReader br = getBr(file);
         boolean eof = false;
         String s;
@@ -225,21 +231,32 @@ public class WordCount {
         return content;
     }
     public static int sameNum(String[] a,String[] b){
-        Set<String> same = new HashSet<>();
-        Set<String> temp = new HashSet<>();
-
-        //ArrayList<String> temp = new ArrayList<String>();
-
-        for (int i = 0; i < a.length; i++) {
-            temp.add(a[i]);   //把数组a中的元素放到Set中，可以去除重复的元素
+        int n = a.length;
+        int m = b.length;
+        int same = 0;
+        for (int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if (a[i].equals(b[j])){
+                    same++;
+                }
+            }
         }
-
-        for (int j = 0; j < b.length; j++) {
-            //把数组b中的元素添加到temp中
-            //如果temp中已存在相同的元素，则temp.add（b[j]）返回false
-            if(!temp.add(b[j]))
-                same.add(b[j]);
-        }
-        return same.size();
+        return same;
+//        Set<String> same = new HashSet<>();
+//        Set<String> temp = new HashSet<>();
+//
+//        //ArrayList<String> temp = new ArrayList<String>();
+//
+//        for (int i = 0; i < a.length; i++) {
+//            temp.add(a[i]);   //把数组a中的元素放到Set中，可以去除重复的元素
+//        }
+//
+//        for (int j = 0; j < b.length; j++) {
+//            //把数组b中的元素添加到temp中
+//            //如果temp中已存在相同的元素，则temp.add（b[j]）返回false
+//            if(!temp.add(b[j]))
+//                same.add(b[j]);
+//        }
+//        return same.size();
     }
 }
