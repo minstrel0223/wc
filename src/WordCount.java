@@ -2,9 +2,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -56,8 +54,10 @@ public class WordCount {
             Files.write(outPath,content.getBytes());
         }
 
+
+
     }
-    public static void extendFunction(String[] strings) throws IOException{
+    public static void extendFunction(String[] strings)throws IOException{
         File file = getFile(strings);
         List<String> list = Arrays.asList(strings);
 
@@ -86,11 +86,12 @@ public class WordCount {
             File file2 = new File(s2);
             int sameNum = stopList(file1,file2);
             String string = new String(file.getName() +",单词数：" + (wordNum - sameNum));
+            //System.out.print(wordNum);
             System.out.println(string);
             print(string);
         }
     }
-    public static File getFile(String[] strings)throws IOException{
+    public static File getFile(String[] strings){
         String fileString = null;
         for (String s : strings){
             if (s.endsWith(".c")){
@@ -100,26 +101,31 @@ public class WordCount {
         File file = new File(fileString);
         return file;
     }
-    public static File print(String content)throws IOException{
-        Path outPath = Paths.get("result.txt");
-        File result = new File(outPath.toString());
-        Files.write(outPath,content.getBytes());
-        return result;
-    }
     public static BufferedReader getBr(File file)throws IOException{
         String fileName = file.getName();
         InputStreamReader isr = new InputStreamReader(new FileInputStream(fileName));
         BufferedReader br = new BufferedReader(isr);
         return br;
     }
-    public static void baseCount(File file) throws IOException{
+    public static File print(String content)throws IOException{
+        Path outPath = Paths.get("result.txt");
+        File result = new File(outPath.toString());
+        Files.write(outPath,content.getBytes());
+        return result;
+    }
+    public static void  baseCount(File file)throws IOException{
         BufferedReader br = getBr(file);
+        boolean eof = false;
         String s = null;
-        while ((s = br.readLine()) != null){
+        while (!eof){
             s = br.readLine();
-            countChar(s);
-            countWord(s);
-            countLine(s);
+            if (s==null){
+                eof=true;
+            }else{
+                countChar(s);
+                countWord(s);
+                countLine(s);
+            }
         }
     }
     public static int countChar(String s){
@@ -130,7 +136,9 @@ public class WordCount {
     }
     public static int countWord(String s){
         String a = ",";
-        s.replaceAll(a," ");
+        if (s.contains(a)){
+            s.replaceAll(a," ");
+        }
         wordNum += s.split(" ").length;
         return wordNum;
     }
@@ -138,7 +146,7 @@ public class WordCount {
         lineNum++;
         return lineNum;
     }
-    public static void extendCount(File file)throws IOException{
+    public static void extendCount(File file) throws IOException{
         if (file == null || !file.exists())
             throw new FileNotFoundException(file + "，文件不存在！");
 
@@ -186,16 +194,18 @@ public class WordCount {
             }
         }
     }
-    public static int stopList(File file1,File file2) throws IOException{
-        String[] strings1 = getWord(file1);
-        String[] strings2 = getWord(file2);
-        return sameNum(strings1,strings2);
+    public static int stopList(File file1,File file2)throws IOException{
+        return sameNum(getWord(file1),getWord(file2));
+    }
+    public static void recFile(File file){
+
     }
     public static String[] getWord(File file) throws IOException{
         BufferedReader br = getBr(file);
         boolean eof = false;
         String s;
         String[] content = null;
+        ArrayList<String> list = new ArrayList<String>();
         while (!eof){
             s = br.readLine();
             if(s == null) {
@@ -206,14 +216,19 @@ public class WordCount {
                     s.replaceAll(a, " ");
                 }
                 content = s.split(" ");
+                for (String s1:content){
+                    list.add(s1);
+                }
             }
-
         }
+        content = list.toArray(new String[list.size()]);
         return content;
     }
     public static int sameNum(String[] a,String[] b){
-        ArrayList<String> same = new ArrayList<String>();
-        ArrayList<String> temp = new ArrayList<String>();
+        Set<String> same = new HashSet<>();
+        Set<String> temp = new HashSet<>();
+
+        //ArrayList<String> temp = new ArrayList<String>();
 
         for (int i = 0; i < a.length; i++) {
             temp.add(a[i]);   //把数组a中的元素放到Set中，可以去除重复的元素
@@ -227,21 +242,4 @@ public class WordCount {
         }
         return same.size();
     }
-    public static void recFile(File file) throws IOException{
-        File[] files = file.listFiles(new FileFilter() {
-            public boolean accept(File pathname) {
-                return pathname.getName().endsWith(".c") || pathname.isDirectory();
-            }
-        });
-        String string =  null;
-        for (File target : files) {
-            extendCount(target);
-            baseCount(target);
-            string += new String(target.getName()+",字符数：" + charNum +"\r\n"
-                    + target.getName()+",单词数：" + wordNum +"\r\n"
-                    + target.getName() +",代码行 / 空行 / 注释行：" + codeLineNum + "/" + blankLineNum + "/" + annotationLineNum+"\r\n");
-        }
-        print(string);
-    }
-
 }

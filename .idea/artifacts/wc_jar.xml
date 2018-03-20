@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="wc:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/wc_jar</output-path>
+    <root id="archive" name="wc.jar">
+      <element id="module-output" name="wc" />
+    </root>
+  </artifact>
+</component>
