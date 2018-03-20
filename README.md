@@ -6,3 +6,6 @@
 >> wc.exe -w file.c  //返回文件 file.c 的单词总数</br> 
 >> wc.exe -l file.c  //返回文件 file.c 的总行数</br> 
 >> wc.exe -o outputFile.txt  //将结果输出到指定文件outputFile.txt
+
+2018/3/20</br> 
+<p>实现扩展功能</p>
